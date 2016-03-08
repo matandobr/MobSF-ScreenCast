@@ -26,7 +26,7 @@ public class Caster extends Service {
     class ClientAsyncTask extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... params) {
-            File file = new File("/sdcard/x.png");
+            File file = new File("/data/local/tmp/x.png");
             try {
                 Socket client = new Socket(params[0], Integer.parseInt(params[1]));
                 byte[] mybytearray = new byte[(int) file.length()];
@@ -58,43 +58,34 @@ public class Caster extends Service {
 
 
 
+        String ip="";
+
         try {
-            String ip = intent.getStringExtra("IP");
-        Process sh = Runtime.getRuntime().exec("su", null,null);
-        OutputStream os = sh.getOutputStream();
-        os.write(("/system/bin/screencap -p /sdcard/x.png").getBytes("ASCII"));
-        os.flush();
-        os.close();
-        sh.waitFor();
+            ip = intent.getStringExtra("IP");
 
-        ClientAsyncTask clientAST = new ClientAsyncTask();
-        String [] ip_port = ip.split(":");
-        clientAST.execute(ip_port);
+            Process process = Runtime.getRuntime().exec("su -c /system/bin/screencap -p /data/local/tmp/x.png");
+            process.waitFor();
+            Process process1 = Runtime.getRuntime().exec("su -c chmod 777 /data/local/tmp/x.png");
+            process1.waitFor();
 
+            /*Process sh = Runtime.getRuntime().exec("su", null,null);
+            OutputStream os = sh.getOutputStream();
+            os.write(("su -c /system/bin/screencap -p /data/local/tmp/x.png").getBytes("ASCII"));
+            os.flush();
+            os.write(("su -c chmod 777 /data/local/tmp/x.png").getBytes());
+            os.flush();
+            os.close();
+            sh.waitFor();
+            */
 
-            //
-      /*  File myFile = new File("/sdcard/x.png");
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.addHeader("AUTH","MobSF-Screen-Service");
-        RequestParams params = new RequestParams();
-        params.put("file", myFile);
-       client.post("http://"+ip+"/ScreenUpload/", params, new AsyncHttpResponseHandler() {
-            @Override
-            public void onStart() {
-                super.onStart();
-            }
-
-            @Override
-            public void onFailure(int arg0, Header[] arg1, byte[] arg2, Throwable arg3) {
-                Log.d("MobSF", "Post Failure");
-            }
-
-            @Override
-            public void onSuccess(int arg0, Header[] arg1, byte[] arg2) {
-                //Log.d("MobSF", "Post Success");
-            }
-
-            });*/
+        } catch (Exception e) {
+            Log.d("MobSF", "Screen Capture Failed: " + e.getMessage().toString());
+        }
+        try
+        {
+            ClientAsyncTask clientAST = new ClientAsyncTask();
+            String [] ip_port = ip.split(":");
+            clientAST.execute(ip_port);
         } catch (Exception e) {
             Log.d("MobSF", "File Upload Failed: " + e.getMessage().toString());
         }
