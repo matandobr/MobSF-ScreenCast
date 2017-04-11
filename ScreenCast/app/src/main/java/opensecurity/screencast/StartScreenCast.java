@@ -7,6 +7,7 @@ import android.util.Log;
 
 public class StartScreenCast extends Service {
     public StartScreenCast() {
+        Log.d("me", "yay");
 
     }
     private  Timer alarm;

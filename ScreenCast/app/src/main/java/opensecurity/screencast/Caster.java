@@ -28,6 +28,7 @@ public class Caster extends Service {
         protected Void doInBackground(String... params) {
             File file = new File("/data/local/tmp/x.png");
             try {
+                Log.d("MobSF", "got here: " + params);
                 Socket client = new Socket(params[0], Integer.parseInt(params[1]));
                 byte[] mybytearray = new byte[(int) file.length()];
                 FileInputStream fileInputStream = new FileInputStream(file);
@@ -62,11 +63,13 @@ public class Caster extends Service {
 
         try {
             ip = intent.getStringExtra("IP");
-
-            Process process = Runtime.getRuntime().exec("su -c /system/bin/screencap -p /data/local/tmp/x.png");
-            process.waitFor();
-            Process process1 = Runtime.getRuntime().exec("su -c chmod 777 /data/local/tmp/x.png");
-            process1.waitFor();
+            Log.d("MobSF", "screencaping");
+            ProcessBuilder pb = new ProcessBuilder("su", "-c", "/data/local/tmp/screencap_command.sh");
+            Process p = pb.start();
+//            Process process = Runtime.getRuntime().exec("su -c /data/local/tmp/screencap_command.sh");
+//            process.waitFor();
+//            Process process1 = Runtime.getRuntime().exec("chmod 777 /data/local/tmp/x.png");
+//            process1.waitFor();
 
             /*Process sh = Runtime.getRuntime().exec("su", null,null);
             OutputStream os = sh.getOutputStream();
